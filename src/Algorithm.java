@@ -86,12 +86,6 @@ public class Algorithm {      // Класс различных функций
         return (-1 * ((double) 1 / IntensiveIn) * Math.log(y));
     }
 
-    /* public void Form_t_osv() {
-         double y = Form_rand();
-         for (int i = 0; i<this.T_osv.length; i++){
-             this.T_osv[i] = (int) (-1 * (1 / IntensiveService) * Math.log(y));
-         }
-     }*/
     public double Form_t_osv() {
         double y = Form_rand();
         return (-1 * (1 / IntensiveService) * Math.log(y));
@@ -142,39 +136,30 @@ public class Algorithm {      // Класс различных функций
             this.T_pred = this.T;
 
             if (this.t_post < minOf_T_osv()) {
-                //System.out.println("t_post " + t_post + " || minOf_T_osv " + minOf_T_osv());
                 this.T = this.T_post;
                 this.N++;
-                if (this.T_k.length <= this.N_k) {
-                    //show();
-                } else {
-                    show();
-                    //System.out.println(Arrays.toString(T_osv));
-                    this.T_k[N_k] += this.T - this.T_pred;
+                show();
+                this.T_k[N_k] += this.T - this.T_pred;
 
-                    if (!(this.N >= K)) {
-                        // i = j: Tосв[j] = T  Условие не нужно, так как T_osv позже целиком перезаполнится
-                        this.t_osv = Form_t_osv();
-                        Arrays.fill(this.T_osv, this.T + t_osv);
-                        N_k++;
-                        System.out.println(Arrays.toString(T_osv));
-                    }
-                    this.t_post = Form_t_post();
-
-                    T_post += t_post;
-                    N_post++;
-                    //show();
-                    if (StoppingCondition()) {
-                        this.P_pr = (double) this.T_k[0] / this.T;
-
-                        this.K_z = Form_K_z();
-
-                        System.out.println("Result Ppr: " + this.P_pr);
-                        System.out.println("Result Kz: " + this.K_z);
-                    }
-
+                if (!(this.N >= K)) {
+                    // i = j: Tосв[j] = T  Условие не нужно, так как T_osv позже целиком перезаполнится
+                    this.t_osv = Form_t_osv();
+                    Arrays.fill(this.T_osv, this.T + t_osv);
+                    N_k++;
                 }
+                this.t_post = Form_t_post();
 
+                T_post += t_post;
+                N_post++;
+                //show();
+                if (StoppingCondition()) {
+                    this.P_pr = (double) this.T_k[0] / this.T;
+
+                    this.K_z = Form_K_z();
+
+                    System.out.println("Result Ppr: " + this.P_pr);
+                    System.out.println("Result Kz: " + this.K_z);
+                }
 
             } else {
                 this.T = minOf_T_osv();
@@ -183,7 +168,6 @@ public class Algorithm {      // Класс различных функций
                 this.T_k[this.N_k] += this.T - this.T_pred;
 
                 //Arrays.fill(this.T_osv, this.T);   Условие не нужно, так как T_osv позже целиком перезаполнится
-                System.out.println("N: " + N + "  K " + K);
                 if (this.N < K) {
                     Arrays.fill(this.T_osv, 99999999);
                     this.N_k--;
@@ -193,7 +177,6 @@ public class Algorithm {      // Класс различных функций
             }
         }
     }
-
 
 
 }
