@@ -22,7 +22,7 @@ public class Algorithm {      // Класс различных функций
     public double IntensiveService; // интенсивность обслуживания (вводимый параметр)
 
     //Generated_values
-    public double t_osv;
+    public double t_osv;            // длительность обслуживания – длительность интервала между моментами начала обслуживания и освобождения прибора (случайная величина)
     public double t_post;           // длительность интервала между моментами поступления заявок (случайная величина)
     public double T_pred;           //момент времени предыдущего события (поступления, освобождения)
 
@@ -138,7 +138,7 @@ public class Algorithm {      // Класс различных функций
             if (this.t_post < minOf_T_osv()) {
                 this.T = this.T_post;
                 this.N++;
-                show();
+                //show();
                 this.T_k[N_k] += this.T - this.T_pred;
 
                 if (!(this.N >= K)) {
