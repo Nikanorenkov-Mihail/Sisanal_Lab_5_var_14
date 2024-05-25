@@ -2,3 +2,4 @@ IntensiveIn: 1
 IntensiveService: 0.25
 N_max: 15
 K: 3
+t_2: 10
