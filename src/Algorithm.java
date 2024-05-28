@@ -95,6 +95,7 @@ public class Algorithm {      // Класс различных функций
             for (int i = number; i < this.time_queue.length - 1; i++) {
                 this.time_queue[i] = this.time_queue[i + 1];
             }
+            N--;
             System.out.println("Заявка номер(-):" + (number + 1) + " удалена из очереди (превышено время ожидания в очереди) | Текущее время: " + this.T + " | Заявка №2 становится заявкой №1");
         }
     }
