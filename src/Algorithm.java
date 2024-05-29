@@ -14,7 +14,7 @@ public class Algorithm {      // Класс различных функций
     double T;                    // текущее системное время
     double T_post;               // ближайший момент времени поступления заявки в систему
     double[] T_k;     // суммарные времена занятости каналов (массив, размерность K)
-    double[] time_queue;       // хранение информации о времени поступления заявки
+    double[][] time_queue;       // хранение информации о времени поступления заявки
     //Enter parameters
     public int N_max;            // число реализаций – максимальное число заявок, поступивших в систему (вводимый параметр)
     public static int K;         // число каналов (вводимый параметр)
@@ -76,24 +76,31 @@ public class Algorithm {      // Класс различных функций
         this.T_post = 0; // ближайший момент времени поступления заявки в систему
         T_k = new double[K];
         T_osv = new double[K];
-        time_queue = new double[N_max];
+        time_queue = new double[N_max][2];
         Arrays.fill(this.T_k, 0);    // суммарные времена занятости каналов (массив, размерность K)
         Arrays.fill(this.T_osv, 99999999);  // ближайшие моменты времени освобождения приборов (массив, размерность K)
-        Arrays.fill(this.time_queue, 0);
+        //Arrays.fill(this.time_queue, 0);
+        for (int i = 0; i < this.time_queue.length; i++) {
+            this.time_queue[i][0] = 0.0;
+            this.time_queue[i][1] = 0.0;
+        }
     }
 
     public void timeCheck() {
         for (int i = 0; i < this.time_queue.length; i++) {
-            if (abs(this.T - this.time_queue[i]) > this.t_2 & this.time_queue[i] != 0.0)
+            if (this.time_queue[i][0] != 0.0 && this.time_queue[i][1] != 0.0 && abs(this.T - this.time_queue[i][0]) > this.time_queue[i][1])
                 deleteTime(i);
         }
     }
 
     public void deleteTime(int number) {
-        if (number == this.time_queue.length - 1) this.time_queue[number] = 0;
-        else {
+        if (number == this.time_queue.length - 1) {
+            this.time_queue[number][0] = 0.0;
+            this.time_queue[number][1] = 0.0;
+        } else {
             for (int i = number; i < this.time_queue.length - 1; i++) {
-                this.time_queue[i] = this.time_queue[i + 1];
+                this.time_queue[i][0] = this.time_queue[i + 1][0];
+                this.time_queue[i][1] = this.time_queue[i + 1][1];
             }
             N--;
             System.out.println("Заявка номер(-):" + (number + 1) + " удалена из очереди (превышено время ожидания в очереди) | Текущее время: " + this.T + " | Заявка №2 становится заявкой №1");
@@ -103,8 +110,9 @@ public class Algorithm {      // Класс различных функций
     public void addTime() {
         boolean flagToOver = false;
         for (int i = 0; i < this.time_queue.length - 1; i++) {
-            if (this.time_queue[i] == 0.0 & !flagToOver) {
-                this.time_queue[i] = this.T;
+            if (this.time_queue[i][0] == 0.0 & !flagToOver) {
+                this.time_queue[i][0] = this.T;
+                this.time_queue[i][1] = Form_t_2();
                 flagToOver = true;
                 System.out.println("Заявка номер(+): " + (i + 1) + " | Поступила в: " + this.T);
                 i = this.time_queue.length - 1;
@@ -113,21 +121,23 @@ public class Algorithm {      // Класс различных функций
         if (!flagToOver) System.out.println("Слишком много заявок поступает в очередь");
     }
 
-    public double Form_rand() {
-        // Parameters for Random
-        int min = 0;
-        int max = 1;
+    public double Form_rand(int min, int max) {
         return min + Math.random() * (max - min);
     }
 
     public double Form_t_post() {
-        double y = Form_rand();
+        double y = Form_rand(0, 1);
         return (-1 * ((double) 1 / IntensiveIn) * Math.log(y));
     }
 
     public double Form_t_osv() {
-        double y = Form_rand();
+        double y = Form_rand(0, 1);
         return (-1 * (1 / IntensiveService) * Math.log(y));
+    }
+
+    public double Form_t_2() {
+        double y = Form_rand(1000, 1500);
+        return (Math.log(y));
     }
 
     public double Form_K_z() {
@@ -190,13 +200,14 @@ public class Algorithm {      // Класс различных функций
                 this.N++;
                 addTime();
                 //show();
+                System.out.println("Заявок: " + N + " Каналов:" + (N_k + 1));
                 this.T_k[N_k] += this.T - this.T_pred;
 
                 if (!(this.N >= K)) {
                     // i = j: Tосв[j] = T  Условие не нужно, так как T_osv позже целиком перезаполнится
                     this.t_osv = Form_t_osv();
                     Arrays.fill(this.T_osv, this.T + t_osv);
-                    N_k++;
+                    if (N_k < (K - 1)) N_k++;
                 }
                 this.t_post = Form_t_post();
 
